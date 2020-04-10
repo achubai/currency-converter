@@ -1,5 +1,6 @@
 export const SET_CONVERSION = 'SET_CONVERSION';
 export const SET_CONVERSION_INDICATOR = 'SET_CONVERSION_INDICATOR';
+export const SET_CONVERSION_ERROR = 'SET_CONVERSION_ERROR';
 
 export interface ChartChunk {
   x: Date;
@@ -31,6 +32,7 @@ export interface Conversion extends Rate {
 
 export interface ConversionsState {
   isLoading: boolean;
+  error?: string;
   data: {
     [key: string]: Conversion;
   };
@@ -66,4 +68,11 @@ export interface SetConversionIndicatorAction {
   };
 }
 
-export type ConversionType = SetConversionAction | SetConversionIndicatorAction;
+export interface SetConversionErrorAction {
+  type: typeof SET_CONVERSION_ERROR;
+  payload: {
+    error: string;
+  };
+}
+
+export type ConversionType =  SetConversionIndicatorAction | SetConversionErrorAction | SetConversionAction;

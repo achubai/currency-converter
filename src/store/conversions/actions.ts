@@ -1,7 +1,14 @@
 import { Action } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 import { RootState } from '../store';
-import { ChartData, ConversionType, RateData, SET_CONVERSION, SET_CONVERSION_INDICATOR } from './types';
+import {
+  ChartData,
+  ConversionType,
+  RateData,
+  SET_CONVERSION,
+  SET_CONVERSION_ERROR,
+  SET_CONVERSION_INDICATOR,
+} from './types';
 import alphaVantage from 'alphavantage';
 import { ALPHA_KEY } from '../../constants/alpha';
 import { normalizeChartData } from '../../utils';
@@ -13,7 +20,16 @@ export const setConversionIndicator = (isLoading): ConversionType => {
   return {
     type: SET_CONVERSION_INDICATOR,
     payload: {
-      isLoading
+      isLoading,
+    },
+  };
+};
+
+export const setConversionError = (error): ConversionType => {
+  return {
+    type: SET_CONVERSION_ERROR,
+    payload: {
+      error,
     },
   };
 };
@@ -35,7 +51,7 @@ export const getRates = (): ThunkAction<
     conversions,
     controls: { amount, from, to },
   }: RootState = getState();
-  const prevConversion = conversions[`${from}-${to}`];
+  const prevConversion = conversions.data[`${from}-${to}`];
   const now = new Date().getTime();
   const fiveMinutes = 5 * 60 * 1000;
 
@@ -78,7 +94,8 @@ export const getRates = (): ThunkAction<
     );
     dispatch(setConversionIndicator(false));
   } catch (e) {
+    console.warn(e);
     dispatch(setConversionIndicator(false));
-    console.warn(e); // TODO: add error handler
+    dispatch(setConversionError('Ooops... Some error occurred try again'));
   }
 };

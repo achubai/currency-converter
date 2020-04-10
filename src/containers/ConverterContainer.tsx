@@ -1,5 +1,11 @@
 import React from 'react';
-import { LayoutChangeEvent, StyleSheet, View, Dimensions } from 'react-native';
+import {
+  LayoutChangeEvent,
+  StyleSheet,
+  View,
+  Dimensions,
+  TouchableOpacity,
+} from 'react-native';
 import colors from '../theme/colors';
 import Title from '../components/Title';
 import currencies from '../constants/currencies';
@@ -11,8 +17,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store/store';
 import { setControlValue } from '../store/controls/actions';
 import { getRates } from '../store/conversions/actions';
+import SwitchIcon from '../components/SwitchIcon';
 
-type Props = {}
+type Props = {};
 
 const ConverterContainer: React.FunctionComponent<Props> = () => {
   const { width } = Dimensions.get('window');
@@ -35,24 +42,49 @@ const ConverterContainer: React.FunctionComponent<Props> = () => {
               onChangeText={(val) => dispatch(setControlValue('amount', val))}
             />
           </View>
-          <View style={isLandscape(width) && styles.col}>
-            <Picker
-              label={'From'}
-              value={from}
-              items={currencies}
-              onValueChange={(val) => dispatch(setControlValue('from', val))}
-            />
-          </View>
-          <View style={isLandscape(width) && styles.col}>
-            <Picker
-              label={'To'}
-              value={to}
-              items={currencies}
-              onValueChange={(val) => dispatch(setControlValue('to', val))}
-            />
+          <View style={isLandscape(width) && styles.combinedColsLandscape}>
+            <View style={isLandscape(width) ? styles.col : styles.shortCol}>
+              <Picker
+                label={'From'}
+                value={from}
+                items={currencies}
+                onValueChange={(val) => dispatch(setControlValue('from', val))}
+              />
+            </View>
+
+            <View
+              style={
+                isLandscape(width)
+                  ? styles.buttonContainerLandscape
+                  : styles.switchContainer
+              }
+            >
+              <TouchableOpacity
+                onPress={() => {
+                  dispatch(setControlValue('from', to));
+                  dispatch(setControlValue('to', from));
+                  dispatch(getRates());
+                }}
+              >
+                <SwitchIcon isHorizontal={isLandscape(width)} />
+              </TouchableOpacity>
+            </View>
+            <View style={isLandscape(width) ? styles.col : styles.shortCol}>
+              <Picker
+                label={'To'}
+                value={to}
+                items={currencies}
+                onValueChange={(val) => dispatch(setControlValue('to', val))}
+              />
+            </View>
           </View>
           <View
-            style={isLandscape(width) && [styles.col, styles.buttonContainer]}
+            style={
+              isLandscape(width) && [
+                styles.col,
+                styles.buttonContainerLandscape,
+              ]
+            }
           >
             <Button
               text="Convert"
@@ -83,8 +115,24 @@ const styles = StyleSheet.create({
   gridLandscape: {
     flexDirection: 'row',
   },
-  buttonContainer: {
+  switchContainer: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    paddingTop: 12,
+    right: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonContainerLandscape: {
     paddingTop: 22,
+  },
+  shortCol: {
+    marginRight: 50,
+  },
+  combinedColsLandscape: {
+    flex: 2,
+    flexDirection: 'row',
   },
   col: {
     flex: 1,

@@ -3,11 +3,13 @@ import {
   ConversionType,
   SET_CONVERSION,
   SET_CONVERSION_INDICATOR,
+  SET_CONVERSION_ERROR,
 } from './types';
 
 const initialState: ConversionsState = {
   isLoading: false,
   data: {},
+  error: null,
 };
 
 export default (
@@ -20,9 +22,15 @@ export default (
         ...state,
         isLoading: payload.isLoading,
       };
+    case SET_CONVERSION_ERROR:
+      return {
+        ...state,
+        error: payload.error,
+      };
     case SET_CONVERSION:
       return {
         ...state,
+        error: null,
         data: {
           ...state.data,
           [payload.conversion]: payload,
