@@ -1,0 +1,1 @@
+export const ALPHA_KEY = '8XDXK6ALAOPTTR3C';
