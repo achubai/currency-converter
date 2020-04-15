@@ -14,18 +14,18 @@ const initialState: ConversionsState = {
 
 export default (
   state = initialState,
-  { type, payload }: ConversionType
+  action: ConversionType
 ): ConversionsState => {
-  switch (type) {
+  switch (action.type) {
     case SET_CONVERSION_INDICATOR:
       return {
         ...state,
-        isLoading: payload.isLoading,
+        isLoading: action.payload.isLoading,
       };
     case SET_CONVERSION_ERROR:
       return {
         ...state,
-        error: payload.error,
+        error: action.payload.error,
       };
     case SET_CONVERSION:
       return {
@@ -33,7 +33,7 @@ export default (
         error: null,
         data: {
           ...state.data,
-          [payload.conversion]: payload,
+          [action.payload.conversion]: action.payload,
         },
       };
     default:
